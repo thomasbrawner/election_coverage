@@ -1,0 +1,4 @@
+http://www.npr.org/templates/search/index.php?searchinput=presidential+election&dateId=365&programId=3
+http://www.npr.org/templates/search/index.php?searchinput=presidential+election&dateId=365&programId=2
+http://www.npr.org/templates/search/index.php?searchinput=presidential+election&dateId=365&programId=7
+http://www.npr.org/templates/search/index.php?searchinput=presidential+election&dateId=365&programId=10
