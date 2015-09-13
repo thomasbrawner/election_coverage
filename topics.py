@@ -35,7 +35,7 @@ feature_names = tfidf.get_feature_names()
 ## topics
 
 nmf = NMFactor(k = 7)
-nmf.solve(V = features, feature_names = feature_names, labels = data['source']) 
+nmf.solve(V = features, feature_names = feature_names, dates = data['date'], labels = data['source']) 
 
 ## --------------------------------------------------------------------- ##
 ## plot topics by source 
