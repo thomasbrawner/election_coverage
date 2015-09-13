@@ -29,7 +29,7 @@ class NMFactor(object):
 		self.k = k
 		self.topics = ['Topic ' + str(i) for i in np.arange(1, self.k + 1)]
 
-	def solve(self, V, labels = None, feature_names = None, converge_target = 0.0001):
+	def solve(self, V, labels = None, feature_names = None, dates = None, converge_target = 0.0001):
 		'''
 		alternating least squares solution for decomposing term-doc matrix V. 
 		stop updating when improvement less than converge_target or at 
@@ -40,9 +40,10 @@ class NMFactor(object):
 		self.H = np.random.rand(self.k, V.shape[1])
 		self.labels = labels 
 		self.feature_names = feature_names
+		self.dates = dates
 		self.rss = [np.sum(np.square( V - self.W.dot(self.H) ))]
 		self.mse = None 
-		self.iters = 0  
+		self.iters = 0
 
 		for i in xrange(self.max_iter):
 
