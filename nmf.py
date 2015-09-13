@@ -113,6 +113,28 @@ class NMFactor(object):
 		gdata.columns = ['Label','Value']
 		return gdata 
 
+	def topic_strength_by_label_time(self, topic):
+		'''
+		topic strength faceting on label, month by month
+		'''
+		if not hasattr(self, 'W'):
+			raise Exception('solve method needs to be executed.')
+
+		if type(self.labels) is not pd.core.series.Series: 
+			self.labels = pd.Series(self.labels)
+
+		if type(self.dates) is not pd.core.series.Series: 
+			self.dates = pd.Series(self.dates)
+		months = pd.Series(pd.DatetimeIndex(self.dates).month)
+		
+		data = pd.concat([self.labels, months, pd.DataFrame(self.W)], axis = 1)
+		data.columns = ['Label','Month'] + self.topics
+		data = data.query('Month < 9')
+		gdata = data.groupby(['Label','Month']).mean()
+		gdata = gdata.iloc[:,topic].reset_index()  
+		gdata.columns = ['Label','Month','Value']
+		return gdata 
+
 	def plot_topic(self, topic, n_words = 50, file_prefix = ''):
 		'''
 		Plot average contribution to topic across sources alongside
@@ -125,20 +147,34 @@ class NMFactor(object):
 		wordcloud = WordCloud().generate(word_string)
 		topic_strength = self.topic_strength_by_label(topic)
 
-		plt.figure(figsize = (9, 3.5))
+		monthly = self.topic_strength_by_label_time(topic)
+		guardian = monthly.query('Label == "Guardian"')
+		nyt = monthly.query('Label == "New York Times"')
+		wsj = monthly.query('Label == "Wall Street Journal"')
+		months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug']
 
-		plt.subplot(121)
-		sns.barplot(x = 'Label', y = 'Value', data = topic_strength)
-		plt.xlabel(''); plt.ylabel('')
+		plt.figure(figsize = (10, 3.5))
 
-		plt.subplot(122)
+		plt.subplot(131)
 		plt.imshow(wordcloud)
 		plt.axis('off')
+
+		plt.subplot(132)
+		plt.plot(guardian['Month'], guardian['Value'], color = 'b', label = 'Guardian')
+		plt.plot(nyt['Month'], nyt['Value'], color = 'g', label = 'New York Times')
+		plt.plot(wsj['Month'], wsj['Value'], color = 'r', label = 'Wall Street Journal')
+		plt.xlabel(''); plt.ylabel(''); plt.xticks([i + 0.5 for i, _ in enumerate(months)], months)
+		
+		plt.subplot(133)
+		sns.barplot(x = 'Label', y = 'Value', data = topic_strength)
+		plt.xlabel(''); plt.ylabel('')
 
 		plt.tight_layout() 
 		plt.savefig('figures/' + file_prefix + 'source_topic' + str(topic) + '.png') 
 		plt.close() 
 		return 
+
+
 			
 ## ----------------------------------------------------- ##
 ## ----------------------------------------------------- ##
