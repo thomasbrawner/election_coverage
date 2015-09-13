@@ -172,29 +172,6 @@ class NMFactor(object):
 		plt.tight_layout() 
 		plt.savefig('figures/' + file_prefix + 'source_topic' + str(topic) + '.png') 
 		plt.close() 
-
-		"""
-		plt.figure(figsize = (10, 3.5))
-
-		plt.subplot(131)
-		plt.imshow(wordcloud)
-		plt.axis('off')
-
-		plt.subplot(132)
-		plt.plot(guardian['Month'], guardian['Value'], color = 'b', label = 'Guardian')
-		plt.plot(nyt['Month'], nyt['Value'], color = 'g', label = 'New York Times')
-		plt.plot(wsj['Month'], wsj['Value'], color = 'r', label = 'Wall Street Journal')
-		plt.xlabel(''); plt.ylabel(''); plt.xticks([i + 0.5 for i, _ in enumerate(months)], months)
-		
-		plt.subplot(133)
-		sns.barplot(x = 'Label', y = 'Value', data = topic_strength)
-		plt.xlabel(''); plt.ylabel('')
-
-		plt.tight_layout() 
-		plt.savefig('figures/' + file_prefix + 'source_topic' + str(topic) + '.png') 
-		plt.close() 
-		"""
-
 		return 
 
 
