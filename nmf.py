@@ -153,6 +153,27 @@ class NMFactor(object):
 		wsj = monthly.query('Label == "Wall Street Journal"')
 		months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug']
 
+		plt.figure(figsize = (8, 8))
+		ax1 = plt.subplot2grid((5, 7), (0, 0), rowspan = 3, colspan = 7)
+		ax2 = plt.subplot2grid((5, 7), (3, 0), rowspan = 2, colspan = 3)
+		ax3 = plt.subplot2grid((5, 7), (3, 3), rowspan = 2, colspan = 4)
+
+		ax1.imshow(wordcloud)
+		ax1.axis('off')
+
+		ax2.plot(guardian['Month'], guardian['Value'], color = 'b', label = 'Guardian')
+		ax2.plot(nyt['Month'], nyt['Value'], color = 'g', label = 'New York Times')
+		ax2.plot(wsj['Month'], wsj['Value'], color = 'r', label = 'Wall Street Journal')
+		plt.xlabel(''); plt.ylabel(''); plt.xticks([i + 0.5 for i, _ in enumerate(months)], months)
+
+		sns.barplot(x = 'Label', y = 'Value', data = topic_strength)
+		plt.xlabel(''); plt.ylabel('')
+
+		plt.tight_layout() 
+		plt.savefig('figures/' + file_prefix + 'source_topic' + str(topic) + '.png') 
+		plt.close() 
+
+		"""
 		plt.figure(figsize = (10, 3.5))
 
 		plt.subplot(131)
@@ -172,6 +193,8 @@ class NMFactor(object):
 		plt.tight_layout() 
 		plt.savefig('figures/' + file_prefix + 'source_topic' + str(topic) + '.png') 
 		plt.close() 
+		"""
+
 		return 
 
 
