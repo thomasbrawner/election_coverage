@@ -6,6 +6,7 @@
 }
 
 \usepackage{amsbsy,amssymb}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[compatibility=false,font=scriptsize]{caption}
 \usepackage[font=scriptsize]{subcaption}
@@ -80,7 +81,8 @@
 \scriptsize 
 \begin{tabular}{lcccc}
 \toprule
-				& Global		& Guardian 	& New York Times	& Wall Street Journal	\\ \midrule
+				& Global		& Guardian 	& New York Times	& Wall Street Journal	\\ 
+\midrule
 Naive Bayes 		& 0.703		& 0.414		& 0.965	 		& 0.340				\\
 Random Forest		& 0.905		& 0.783		& 0.998			& 0.809 				\\ 
 Gradient Boosting	& 0.921		& 0.856		& 0.983			& 0.833				\\ 
@@ -90,6 +92,70 @@ $N$				& 3757    		& 1018		& 2087 			& 652	 			\\
 \end{table}
 
 \end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Topic modeling strategy}
+
+\[
+\begin{bmatrix}
+        		v_{11} & \cdots & v_{1t} & \cdots & v_{1T} \\
+		\vdots & \ddots & \vdots & \ddots & \vdots\\
+		v_{i1} & \cdots & v_{it} & \cdots & v_{iT} \\
+        		\vdots & \ddots & \vdots & \ddots & \vdots\\
+        		v_{N1} & \cdots & v_{Nt} & \cdots & v_{NT}
+\end{bmatrix}
+=
+\]
+
+\[
+\begin{bmatrix}
+        		w_{11} & \cdots & w_{1K} \\
+		\vdots & \ddots & \vdots \\
+		w_{i1} & \cdots & w_{iK} \\
+        		\vdots & \ddots & \vdots\\
+        		w_{N1} & \cdots & w_{NK}
+\end{bmatrix}
+\times 
+\begin{bmatrix}
+        		h_{11} & \cdots & h_{1t} & \cdots & h_{1T} \\
+		\vdots & \ddots & \vdots & \ddots & \vdots\\
+		h_{K1} & \cdots & h_{Kt} & \cdots & h_{KT} \\
+\end{bmatrix}
+\]
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Topic modeling strategy (cont.)}
+
+
+\vspace{5mm}
+
+\begin{itemize}
+	\item With $\mathbf{H}_{K \times T}$
+	\vspace{2mm}
+	\begin{innerlist}
+		\item sort descending for each $k$ 
+		\item top 50 terms $\rightarrow$ Word Cloud
+	\end{innerlist}
+	\vspace{6mm}
+	\item With $\mathbf{W}_{N \times K}$
+	\vspace{2mm}
+	\begin{innerlist}
+		\item group by source, month $\rightarrow$ time series
+		\item group by source  $\rightarrow$ bar plots
+	\end{innerlist}
+\end{itemize}
+
+
+\end{frame}
+
 
 %% ---------------------------------------------------------------- %%
 %% ---------------------------------------------------------------- %%
