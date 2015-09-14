@@ -144,7 +144,7 @@ class NMFactor(object):
 			raise Exception('topic must be an integer in the range [0, self.k - 1].')
 
 		word_string = self.word_string(topic, n_words)
-		wordcloud = WordCloud().generate(word_string)
+		wordcloud = WordCloud(background_color = 'white', width = 2200, height = 1100).generate(word_string)
 		topic_strength = self.topic_strength_by_label(topic)
 
 		monthly = self.topic_strength_by_label_time(topic)
