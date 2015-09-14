@@ -144,7 +144,7 @@ class NMFactor(object):
 			raise Exception('topic must be an integer in the range [0, self.k - 1].')
 
 		word_string = self.word_string(topic, n_words)
-		wordcloud = WordCloud(background_color = 'white', width = 2200, height = 1100).generate(word_string)
+		wordcloud = WordCloud(width = 2200, height = 1100).generate(word_string)
 		topic_strength = self.topic_strength_by_label(topic)
 
 		monthly = self.topic_strength_by_label_time(topic)
@@ -164,7 +164,7 @@ class NMFactor(object):
 		ax2.plot(guardian['Month'], guardian['Value'], color = 'b', label = 'Guardian')
 		ax2.plot(nyt['Month'], nyt['Value'], color = 'g', label = 'New York Times')
 		ax2.plot(wsj['Month'], wsj['Value'], color = 'r', label = 'Wall Street Journal')
-		plt.xlabel(''); plt.ylabel(''); plt.xticks([i + 0.5 for i, _ in enumerate(months)], months)
+		plt.xlabel(''); plt.ylabel(''); ax2.set_xticklabels(months)
 
 		sns.barplot(x = 'Label', y = 'Value', data = topic_strength)
 		plt.xlabel(''); plt.ylabel('')
