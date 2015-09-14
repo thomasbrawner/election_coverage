@@ -1,0 +1,185 @@
+\documentclass[11pt]{beamer}
+
+\mode<presentation>
+{
+\usetheme{Warsaw}
+}
+
+\usepackage{amsbsy,amssymb}
+\usepackage{graphicx}
+\usepackage[compatibility=false,font=scriptsize]{caption}
+\usepackage[font=scriptsize]{subcaption}
+\usepackage{booktabs}
+
+\usepackage{paralist}
+\newenvironment{innerlist}[1][\enskip\textbullet]%
+        {\begin{compactenum}[#1]}{\end{compactenum}}
+
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\title{The U.S. Presidential Race}
+\subtitle{Comparing Coverage Across Three Major Sources}
+\author{Thomas Brawner}
+\institute{\normalsize Galvanize, Inc.}
+\date{September 2015}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{document}
+\maketitle
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Objective}
+
+\vspace{5mm}
+
+\begin{itemize}
+	\item Classification: {\it Is there a difference in coverage?}
+	\vspace{4mm}
+	\item Topic Modeling: {\it What is the difference?}
+\end{itemize}
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Data collection}
+
+\vspace{5mm}
+
+\begin{innerlist}
+	\item[$\sharp~$] Scrape {\it Guardian}, {\it New York Times}, {\it Wall Street Journal}
+	\vspace{4mm}
+	\item[$\sharp~$] January to August 2015
+	\vspace{4mm}
+	\item[$\sharp~$] Raw data $\rightarrow$ MongoDB
+	\vspace{4mm}
+	\item[$\sharp~$] Filter on candidates
+	\vspace{4mm}
+	\item[$\sharp~$] TF-IDF, 2000 terms
+\end{innerlist}
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Multiclass classification accuracy}
+
+\begin{table}
+\centering
+\scriptsize 
+\begin{tabular}{lcccc}
+\toprule
+				& Global		& Guardian 	& New York Times	& Wall Street Journal	\\ \midrule
+Naive Bayes 		& 0.703		& 0.414		& 0.965	 		& 0.340				\\
+Random Forest		& 0.905		& 0.783		& 0.998			& 0.809 				\\ 
+Gradient Boosting	& 0.921		& 0.856		& 0.983			& 0.833				\\ 
+$N$				& 3757    		& 1018		& 2087 			& 652	 			\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Hillary's E-mail}
+
+\begin{figure}
+\centering
+\includegraphics[width=85mm,height=75mm]{figures/source_topic0.png}
+\end{figure} 
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Chris Christie}
+
+\begin{figure}
+\centering
+\includegraphics[width=85mm,height=75mm]{figures/source_topic1.png}
+\end{figure} 
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Campaign Finance}
+
+\begin{figure}
+\centering
+\includegraphics[width=85mm,height=75mm]{figures/source_topic2.png}
+\end{figure} 
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{The Rise of Trump}
+
+\begin{figure}
+\centering
+\includegraphics[width=85mm,height=75mm]{figures/source_topic7.png}
+\end{figure} 
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Social Politics}
+
+\begin{figure}
+\centering
+\includegraphics[width=85mm,height=75mm]{figures/source_topic4.png}
+\end{figure} 
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\begin{frame}
+\frametitle{Next steps}
+
+\vspace{5mm}
+
+\begin{innerlist}
+	\item[$\sharp~$] More data: collect through duration of election
+	\vspace{4mm}
+	\item[$\sharp~$] More data: {\it Washington Post}, {\it Financial Times}, etc.
+	\vspace{4mm}
+	\item[$\sharp~$] Finer classification model tuning 
+	\vspace{4mm}
+	\item[$\sharp~$] What are we misclassifying? 
+\end{innerlist}
+
+\end{frame}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
+
+\end{document}
+
+%% ---------------------------------------------------------------- %%
+%% ---------------------------------------------------------------- %%
