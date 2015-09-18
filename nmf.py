@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd  
 import seaborn as sns 
 from scipy.sparse.linalg import lsqr 
+from sklearn.cluster import AgglomerativeClustering, KMeans 
 from wordcloud import WordCloud
 
 sns.set_style('whitegrid')
@@ -14,6 +15,18 @@ sns.set_style('whitegrid')
 ## n largest items
 
 def n_largest(arr, n): return np.argpartition(arr, -n)[-n:]
+
+## ----------------------------------------------------- ##
+
+def scale_conversion(df, new_scale):
+	'''
+	convert values of df from arbitrary range to (min, max), then 
+	round the result to integer
+	'''
+	old_range = (df.max().max() - df.min().min())  
+	new_range = (new_scale[1] - new_scale[0])  
+	new_df = (((df - df.min().min()) * new_range) / old_range) + 1
+	return np.round(new_df)
 
 ## ----------------------------------------------------- ##
 ## nmf class
@@ -35,14 +48,19 @@ class NMFactor(object):
 		'''
 		alternating least squares solution for decomposing term-doc matrix V. 
 		stop updating when improvement less than converge_target or at 
-		max iterations 
+		max iterations. 
+		return predicted topics in self.topics 
 		'''
 		self.V = V
 		self.W = np.random.rand(V.shape[0], self.k)
 		self.H = np.random.rand(self.k, V.shape[1])
 		self.labels = labels 
+		if type(self.labels) is not pd.core.series.Series: 
+			self.labels = pd.Series(self.labels)
 		self.feature_names = feature_names
 		self.dates = dates
+		if type(self.dates) is not pd.core.series.Series: 
+			self.dates = pd.Series(self.dates)
 		self.rss = [np.sum(np.square( V - self.W.dot(self.H) ))]
 		self.mse = None 
 		self.iters = 0
@@ -63,15 +81,16 @@ class NMFactor(object):
 			
 		self.iters = i + 1
 		self.mse = np.sqrt(self.rss[-1] / float(self.V.size))
+		self.topic_preds = np.argmax(np.array(self.W), 1).flatten() 
 
-	def top_words(self, topic, n_words):
+	def top_words(self, topic, n_terms):
 		'''
 		return the top n words for each of k topics 
 		'''
 		if not hasattr(self, 'H'):
 			raise Exception('solve method needs to be executed.')
 		
-		word_idx = n_largest(np.array(self.H)[topic, :].flatten(), n_words)
+		word_idx = n_largest(np.array(self.H)[topic, :].flatten(), n_terms)
 		words = np.array(self.feature_names)[word_idx]
 		values = np.array(self.H)[topic, word_idx]
 		values = np.round(values * 10)
@@ -89,12 +108,12 @@ class NMFactor(object):
 			idx_docs.append(n_largest(np.array(self.W[:, i]).flatten(), n))
 		return dict(zip(np.arange(self.k), idx_docs))
 
-	def word_string(self, topic, n_words): 
+	def word_string(self, topic, n_terms): 
 		'''
-		display word cloud for topic using n_words top words for that topic. 
-		the word cloud function expects a string...
+		display word cloud for topic using n_terms top words for that topic. 
+		the word cloud function expects a string.
 		''' 
-		top_words = self.top_words(topic, n_words)
+		top_words = self.top_words(topic, n_terms)
 		word_string = ' '.join([' '.join([x] * y) for x, y in top_words])
 		return word_string 
 
@@ -104,9 +123,6 @@ class NMFactor(object):
 		'''
 		if not hasattr(self, 'W'):
 			raise Exception('solve method needs to be executed.')
-
-		if type(self.labels) is not pd.core.series.Series: 
-			labels = pd.Series(self.labels)
 
 		data = pd.concat([self.labels, pd.DataFrame(self.W)], axis = 1)
 		data.columns = ['Label'] + self.topics 
@@ -122,11 +138,6 @@ class NMFactor(object):
 		if not hasattr(self, 'W'):
 			raise Exception('solve method needs to be executed.')
 
-		if type(self.labels) is not pd.core.series.Series: 
-			self.labels = pd.Series(self.labels)
-
-		if type(self.dates) is not pd.core.series.Series: 
-			self.dates = pd.Series(self.dates)
 		months = pd.Series(pd.DatetimeIndex(self.dates).month)
 		
 		data = pd.concat([self.labels, months, pd.DataFrame(self.W)], axis = 1)
@@ -137,15 +148,15 @@ class NMFactor(object):
 		gdata.columns = ['Label','Month','Value']
 		return gdata 
 
-	def plot_topic(self, topic, n_words = 50, file_prefix = ''):
+	def plot_topic(self, topic, n_terms = 50, file_prefix = ''):
 		'''
 		Plot average contribution to topic across sources alongside
-		word cloud (containing n_words) for that topic 
+		word cloud (containing n_terms) for that topic 
 		'''
 		if topic not in np.arange(self.k):
 			raise Exception('topic must be an integer in the range [0, self.k - 1].')
 
-		word_string = self.word_string(topic, n_words)
+		word_string = self.word_string(topic, n_terms)
 		wordcloud = WordCloud(background_color = 'white', width = 2200, height = 1100).generate(word_string)
 		topic_strength = self.topic_strength_by_label(topic)
 
@@ -176,7 +187,5 @@ class NMFactor(object):
 		plt.close() 
 		return 
 
-
-			
 ## ----------------------------------------------------- ##
 ## ----------------------------------------------------- ##
