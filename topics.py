@@ -8,8 +8,12 @@ import seaborn as sns
 from collections import defaultdict
 from nltk.corpus import stopwords
 from nmf import NMFactor 
+from pattern.en import parse, split, wordnet
+from random import seed  
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from wordcloud import WordCloud
+
+seed(1537)
 
 ## ----------------------------------------------------- ##
 ## read the data 
@@ -35,7 +39,7 @@ feature_names = tfidf.get_feature_names()
 ## --------------------------------------------------------------------- ##
 ## topics
 
-nmf = NMFactor(k = 20)
+nmf = NMFactor(k = 15)
 nmf.solve(V = features, feature_names = feature_names, dates = data['date'], labels = data['source']) 
 data['topic'] = nmf.topic_preds 
 
@@ -110,34 +114,6 @@ def within_label_cloud_by_topic(data_dict, topic):
 			pass 
 
 ## --------------------------------------------------------------------- ##
-## 
-"""
-tfidf = TfidfVectorizer(stop_words = augmented_stop_words, max_features = 500)
-count = CountVectorizer(stop_words = augmented_stop_words, max_features = 500)
-
-zero = data.query('topic == 0')
-
-tfidf_features = tfidf.fit_transform(zero['text'])
-tfidf_names = tfidf.get_feature_names()
-
-tfidf_terms = pd.DataFrame(tfidf_features.toarray(), index = zero['source'])
-tfidf_terms = tfidf_terms.groupby(tfidf_terms.index.values).mean() 
-
-count_features = count.fit_transform(zero['text'])
-count_names = count.get_feature_names() 
-
-count_terms = pd.DataFrame(count_features.toarray(), index = zero['source'])
-count_terms = count_terms.groupby(count_terms.index.values).mean() 
-
-t_convert = scale_conversion(tfidf_terms, (1, 1000))
-c_convert = scale_conversion(count_terms, (1, 1000))
-
-check = cloud_word_string(t_convert, tfidf_names, c_convert, count_names)
-within_label_cloud_by_topic(check)
-
-import sys; sys.exit() 
-"""
-## --------------------------------------------------------------------- ##
 ## plot topics by source 
 
 tfidf = TfidfVectorizer(stop_words = augmented_stop_words, max_features = 500)
@@ -169,6 +145,40 @@ for i in xrange(nmf.k):
 	string_dict = cloud_word_string(t_convert, tfidf_names, c_convert, count_names)
 	within_label_cloud_by_topic(string_dict, i)
 
+## --------------------------------------------------------------------- ##
+## document level sentiment 
+
+# template : https://discountllamas.wordpress.com/2011/03/28/basic-sentiment-analysis-of-news-articles/
+# WordNet : http://wordnet.princeton.edu/
+# http://sentiwordnet.isti.cnr.it/
+
+def sentiment(content):
+    wordnet.sentiment.load()
+    relevant_types = ['JJ', 'VB', 'RB'] # adjectives, verbs, adverbs
+    score = 0
+    sentences = split(parse(content, lemmata=True))
+    for sentence in sentences:
+        for word in sentence.words:
+            if word.type in relevant_types:
+                pos, neg, obj = wordnet.sentiment[word.lemma]
+                score = score + ((pos - neg) * (1 - obj)) # weight subjective words
+    return score 
+
+content = data['text'].tolist()
+data['sentiment'] = pd.Series([sentiment(x) for x in content])
+
+## --------------------------------------------------------------------- ##
+
+for i in xrange(nmf.k):
+
+	topic_data = data.query('topic == {0}'.format(str(i)))
+	topic_data = topic_data[['source','sentiment']].groupby('source').mean().reset_index()
+
+	sns.barplot(x='source', y='sentiment', data=topic_data)
+	plt.xlabel(''); plt.ylabel('') 
+	plt.tight_layout() 
+	plt.savefig('figures/source_sentiment_topic' + str(i) + '.png') 
+	plt.close() 
 
 ## --------------------------------------------------------------------- ##
 ## --------------------------------------------------------------------- ##
