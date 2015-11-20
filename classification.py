@@ -64,12 +64,29 @@ analysis_data = format_data(data, vectorizer=tfidf)
 ## classification 
 
 nb = MultinomialNB()
-rf = RandomForestClassifier(n_estimators=500, n_jobs=-1) 
-gb = GradientBoostingClassifier(n_estimators=500, learning_rate=0.05)
+
+rf_grid = {'n_estimators' : [1000],
+		   'max_features' : ['sqrt', 0.5], 
+		   'min_samples_leaf' : [3, 7], 
+		   'max_depth' : [7, None]} 
+rf = RandomForestClassifier(n_jobs=-1) 
+rf_search = GridSearchCV(rf, rf_grid, cv=5, n_jobs=-1, verbose=1)
+rf_search.fit(analysis_data[0], np.array(analysis_data[2]))
+
+gb_grid = {'n_estimators' : [1000],
+		   'max_features' : [0.5, None],
+		   'max_depth' : [1, 3, 5],
+		   'learning_rate' : [0.1, 0.05, 0.01]}
+gb = GradientBoostingClassifier()
+gb_search = GridSearchCV(gb, gb_grid, cv=5, verbose=1)
+gb_search.fit(analysis_data[0], np.array(analysis_data[2]))
+
+## ----------------------------------------------------- ##
+## performance 
 
 perf_nb = evaluate_classifications(nb, analysis_data)
-perf_rf = evaluate_classifications(rf, analysis_data)
-perf_gb = evaluate_classifications(gb, analysis_data)
+perf_rf = evaluate_classifications(rf_search.best_estimator_, analysis_data)
+perf_gb = evaluate_classifications(gb_search.best_estimator_, analysis_data)
 
 print '\nGlobal performance\n'
 print 'naive bayes       : ', perf_nb[1]
