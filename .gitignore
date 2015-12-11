@@ -1,4 +1,12 @@
 *.pyc
+*.aux
+*.log
+*.nav
+*.out 
+*.snm 
+*.synctex.gz
+*.toc
 *.txt
 *.json
 .DS_Store
+data/*
