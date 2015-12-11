@@ -2,7 +2,7 @@ import json
 import requests
 
 with open('api_keys.json') as f:
-	api_key = json.load(f)['guardian_api_key']
+    api_key = json.load(f)['guardian_api_key']
 
 
 def return_url(section, start_date, end_date, page_size, api_key):
