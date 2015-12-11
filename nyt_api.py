@@ -18,14 +18,14 @@ date_list = [('20150101', '20150131'),
 
 
 articles_out = []
-    for date_tuple in date_list:
-        for i in range(0, 100):
-            articles = api.search(q='election', 
-                                  fq={'source' : ['The New York Times']}, 
-                                  begin_date=date_tuple[0], 
-                                  end_date=date_tuple[1],
-                                  page=str(i))
-            articles_out += articles['response']['docs']
+for date_tuple in date_list:
+    for i in range(0, 100):
+        articles = api.search(q='election', 
+                              fq={'source' : ['The New York Times']}, 
+                              begin_date=date_tuple[0], 
+                              end_date=date_tuple[1],
+                              page=str(i))
+        articles_out += articles['response']['docs']
 
 with open('nyt_results_election_2015.txt', 'wb') as f:
     json.dump(articles_out, f)
