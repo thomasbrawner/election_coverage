@@ -3,11 +3,9 @@ from nytimesarticle import articleAPI
 
 
 with open('api_keys.json') as f:
-	api_key = json.load(f)['nyt_api_key']
+    api_key = json.load(f)['nyt_api_key']
 api = articleAPI(api_key)
 
-## ------------------------------------------------------------------ ##
-## set up date ranges to search 
 
 date_list = [('20150101', '20150131'),
              ('20150201', '20150228'),
@@ -18,8 +16,6 @@ date_list = [('20150101', '20150131'),
              ('20150701', '20150731'),
              ('20150801', '20150831')]
 
-## ------------------------------------------------------------------ ##
-## get article data
 
 articles_out = []
     for date_tuple in date_list:
