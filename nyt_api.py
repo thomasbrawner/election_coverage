@@ -19,7 +19,7 @@ date_list = [('20150101', '20150131'),
 
 articles_out = []
 for date_tuple in date_list:
-    for i in range(0, 100):
+    for i in xrange(0, 100):
         articles = api.search(q='election', 
                               fq={'source' : ['The New York Times']}, 
                               begin_date=date_tuple[0], 
