@@ -18,11 +18,9 @@ dates = itertools.product(months, days)
 browser = RoboBrowser(history = True)
 relevant_urls = []
 bad_urls = []
-
 for date in dates:
     m, d = date[0], date[1]
     archive_url = 'http://www.wsj.com/public/page/archive-2015-' + str(m) + '-' + str(d) + '.html'
-
     try:
         browser.open(archive_url)
         articles = browser.find_all('h2')
@@ -33,7 +31,7 @@ for date in dates:
         bad_urls.append(archive_url)
         pass 
 
-
+## save the urls 
 with open('wsj_article_urls.txt','rb') as f:
     f.write(json.dumps(relevant_urls))
     f.close() 
