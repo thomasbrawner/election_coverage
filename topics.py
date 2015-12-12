@@ -98,20 +98,20 @@ tfidf = TfidfVectorizer(stop_words = augmented_stop_words, max_features = 500)
 count = CountVectorizer(stop_words = augmented_stop_words, max_features = 500)
 
 for i in xrange(nmf.k):
-	nmf.plot_topic(i)  # topics 
-	topic_data = data.query('topic == {0}'.format(str(i)))  # look within topics 
-	tfidf_features = tfidf.fit_transform(topic_data['text'])
-	tfidf_names = tfidf.get_feature_names()
-	tfidf_terms = pd.DataFrame(tfidf_features.toarray(), index = topic_data['source'])
-	tfidf_terms = tfidf_terms.groupby(tfidf_terms.index.values).mean() 
-	count_features = count.fit_transform(topic_data['text'])
-	count_names = count.get_feature_names() 
-	count_terms = pd.DataFrame(count_features.toarray(), index = topic_data['source'])
-	count_terms = count_terms.groupby(count_terms.index.values).mean() 
-	t_convert = scale_conversion(tfidf_terms, (1, 1000))
-	c_convert = scale_conversion(count_terms, (1, 1000))
-	string_dict = cloud_word_string(t_convert, tfidf_names, c_convert, count_names)
-	within_label_cloud_by_topic(string_dict, i)
+    nmf.plot_topic(i)  # topics 
+    topic_data = data.query('topic == {0}'.format(str(i)))  # look within topics 
+    tfidf_features = tfidf.fit_transform(topic_data['text'])
+    tfidf_names = tfidf.get_feature_names()
+    tfidf_terms = pd.DataFrame(tfidf_features.toarray(), index = topic_data['source'])
+    tfidf_terms = tfidf_terms.groupby(tfidf_terms.index.values).mean() 
+    count_features = count.fit_transform(topic_data['text'])
+    count_names = count.get_feature_names() 
+    count_terms = pd.DataFrame(count_features.toarray(), index = topic_data['source'])
+    count_terms = count_terms.groupby(count_terms.index.values).mean() 
+    t_convert = scale_conversion(tfidf_terms, (1, 1000))
+    c_convert = scale_conversion(count_terms, (1, 1000))
+    string_dict = cloud_word_string(t_convert, tfidf_names, c_convert, count_names)
+    within_label_cloud_by_topic(string_dict, i)
 
 ## document level sentiment 
 ## template : https://discountllamas.wordpress.com/2011/03/28/basic-sentiment-analysis-of-news-articles/
