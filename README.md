@@ -5,4 +5,4 @@ This repository hosts code for exploring the 2016 presidential election coverage
 1. Determine if the source can be predicted given the content with a series of classification models; 
 2. Explore differences in the content across sources through topic modelling.
 
-<img src='source_topic10.png'>
+<img src='figures/source_topic10.png'>
